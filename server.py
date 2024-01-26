@@ -1,29 +1,32 @@
 from flask import Flask, request, jsonify
-from joblib import load
 import pandas as pd
-app = Flask(__name__)
-model = load('ridge_model.joblib')
+from joblib import load
 
 
-@app.route('/')
-def healthCheck():
-    return "The Server is Up"
+def create_app(model_path):
+    app = Flask(__name__)
+    model = load(model_path)
 
+    @app.route('/')
+    def healthcheck():
+        return "The Server is Up"
 
-@app.route('/predict', methods=['POST'])
-def predict():
-    # Receive JSON array from the request body
-    json_data = request.json
+    @app.route('/predict', methods=['POST'])
+    def predict():
+        # Receive JSON array from the request body
+        json_data = request.json
 
-    # Convert JSON array to DataFrame
-    X_pred = pd.DataFrame(json_data)
+        # Convert JSON array to DataFrame
+        X_pred = pd.DataFrame(json_data)
 
-    # Make predictions
-    predictions = model.predict(X_pred)
+        # Make predictions
+        predictions = model.predict(X_pred)
+        # Return the predictions as a JSON response
+        return jsonify({'predictions': predictions.tolist()})
 
-    # Return the predictions as a JSON response
-    return jsonify({'predictions': predictions.tolist()})
+    return app
 
 
 if __name__ == '__main__':
+    app = create_app('ridge_model.joblib')
     app.run(debug=True)

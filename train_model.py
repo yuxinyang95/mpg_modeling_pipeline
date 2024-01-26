@@ -8,6 +8,7 @@ import ssl
 import numpy as np
 from datetime import datetime
 
+
 def train_and_save_ridge_model(metrics_save_path="metrics", model_save_path="ridge_model.joblib"):
     """
     Trains a Ridge Regression model using GridSearchCV and saves the trained model.
@@ -43,7 +44,8 @@ def train_and_save_ridge_model(metrics_save_path="metrics", model_save_path="rid
 
     # Prepare metrics for storage
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    cv_results = {key: (value.tolist() if isinstance(value, np.ndarray) else value) for key, value in clf.cv_results_.items()}
+    cv_results = {key: (value.tolist() if isinstance(value, np.ndarray) else value) for key, value in
+                  clf.cv_results_.items()}
 
     cv_r2_scores = cv_results['mean_test_score']
 
